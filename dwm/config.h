@@ -151,7 +151,7 @@ static const Key keys[] = {
 	{ MODKEY,			XK_Escape,	spawn,		SHCMD(TERMINAL " -e htop") },
 	//{ MODKEY|ShiftMask,		XK_backslash,	spawn,		{.v = (const char*[]){ TERMINAL, "-e", "lf", NULL } } },
 	{ MODKEY,                       XK_r,  	   	togglefloating, {0} },
-	{ MODKEY|ShiftMask,		XK_r,		togglefloating,	{0} },
+	//{ MODKEY|ShiftMask,		XK_r,		togglefloating,	{0} },
 	{ MODKEY,			XK_t,		setlayout,	{.v = &layouts[0]} }, /* tile */
 	//{ MODKEY|ShiftMask,		XK_backslash,	spawn,		SHCMD("") },
 	{ MODKEY,			XK_a,		togglegaps,	{0} },
