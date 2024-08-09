@@ -70,7 +70,19 @@ static const int lockfullscreen = 1; /* 1 will force focus on the fullscreen win
 static const Layout layouts[] = {
 	/* symbol     arrange function */
 	{ "[]=",	tile },			/* Default: Master on left, slaves on right */
-	{ "><>",	NULL },			/* no layout function means floating behavior */
+	{ "TTT",	bstack },               /* Master on top, slaves on bottom */
+
+	{ "[@]",	spiral },               /* Fibonacci spiral */
+	{ "[\\]",	dwindle },              /* Decreasing in size right and leftward */
+
+	{ "[D]",	deck },	                /* Master on left, slaves in monocle-like mode on right */
+	{ "[M]",	monocle },              /* All windows on top of eachother */
+
+	{ "|M|",	centeredmaster },		/* Master in middle, slaves on sides */
+	{ ">M>",	centeredfloatingmaster },	/* Same but master floats */
+
+	{ "><>",	NULL },	                /* no layout function means floating behavior */
+	{ NULL,		NULL },
 };
 
 /* key definitions */
@@ -146,7 +158,7 @@ static const Key keys[] = {
 	{ MODKEY,			XK_q,		killclient,	{0} },
 	{ MODKEY|ShiftMask,	        XK_q,      	quit,           {0} },
 	{ MODKEY,			XK_w,		spawn,		{.v = (const char*[]){ BROWSER, NULL } } },
-	{ MODKEY|ShiftMask,		XK_w,		spawn,		{.v = (const char*[]){ TERMINAL, "-e", "nmtui", NULL } } },
+	{ MODKEY|ShiftMask,		XK_w,		spawn,		{.v = (const char*[]){ TERMINAL, "-e", "sudo", "nmtui", NULL } } },
 	{ MODKEY|ShiftMask,		XK_b,		spawn,		{.v = (const char*[]){ BIT, NULL } } },
 	{ MODKEY,			XK_p,		spawn,		SHCMD(TERMINAL " -e alsamixer ") },
 	{ MODKEY,			XK_Escape,	spawn,		SHCMD(TERMINAL " -e htop") },
@@ -154,6 +166,14 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_r,  	   	togglefloating, {0} },
 	//{ MODKEY|ShiftMask,		XK_r,		togglefloating,	{0} },
 	{ MODKEY,			XK_t,		setlayout,	{.v = &layouts[0]} }, /* tile */
+	{ MODKEY|ShiftMask,		XK_t,		setlayout,	{.v = &layouts[1]} }, /* bstack */
+	{ MODKEY,			XK_c,		setlayout,	{.v = &layouts[6]} }, /* centeredmaster */
+	{ MODKEY|ShiftMask,		XK_c,		setlayout,	{.v = &layouts[7]} }, /* centeredfloatingmaster */
+	{ MODKEY,			XK_m,		setlayout,	{.v = &layouts[5]} }, /* monocle */
+	{ MODKEY|ShiftMask,		XK_m,		setlayout,	{.v = &layouts[4]} }, /* deck */
+	{ MODKEY,			XK_u,		setlayout,	{.v = &layouts[2]} }, /* spiral */
+	{ MODKEY|ShiftMask,		XK_u,		setlayout,	{.v = &layouts[3]} }, /* dwindle */
+
 	//{ MODKEY|ShiftMask,		XK_backslash,	spawn,		SHCMD("") },
 	{ MODKEY,			XK_a,		togglegaps,	{0} },
 	{ MODKEY|ShiftMask,		XK_a,		defaultgaps,	{0} },
@@ -194,13 +214,13 @@ static const Key keys[] = {
 	{ ALTKEY|ControlMask,		XK_p,		spawn,		SHCMD("~/.local/bin/picom-toggle.sh")},
 	{ ALTKEY|ControlMask,		XK_o,		spawn,		SHCMD("~/.local/bin/xset.sh")},
 	{ ALTKEY|ShiftMask,		XK_l,		spawn,		SHCMD("slock")},
-	{ ALTKEY|ShiftMask,		XK_r,		spawn,		SHCMD("systemctl reboot")},
-	{ ALTKEY|ShiftMask,		XK_d,		spawn,		SHCMD("systemctl shutdown")},
 	{ ALTKEY,			XK_p,		spawn,		SHCMD("brightnessctl set 5%+") },
 	{ ALTKEY, 			XK_l,		spawn,		SHCMD("brightnessctl set 5%-") },
 	{ 0,				XK_F12,		spawn,		SHCMD("amixer -q sset Master 5%+") },
 	{ 0,				XK_F11,		spawn,		SHCMD("amixer -q sset Master 5%-") },
 	{ 0,				XK_F10,		spawn,		SHCMD("amixer -q sset Master toggle") },
+	{ ALTKEY|ShiftMask,		XK_r,		spawn,		{.v = (const char*[]){ TERMINAL, "-e", "sudo", "reboot", "-i",  NULL } } },
+	{ ALTKEY|ShiftMask,		XK_d,		spawn,		{.v = (const char*[]){ TERMINAL, "-e", "sudo", "poweroff", "-i",  NULL } } },
 
 	{ MODKEY,			XK_Left,	focusmon,	{.i = -1 } },
 	{ MODKEY|ShiftMask,		XK_Left,	tagmon,		{.i = -1 } },
