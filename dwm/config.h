@@ -213,6 +213,7 @@ static const Key keys[] = {
 	{ ALTKEY|ControlMask,		XK_Return,	spawn,		{.v = termcmd } },
 	{ ALTKEY|ControlMask,		XK_p,		spawn,		SHCMD("~/.local/bin/xcompmgr-toggle.sh")},
 	{ ALTKEY|ControlMask,		XK_o,		spawn,		SHCMD("~/.local/bin/xset.sh")},
+	{ ALTKEY|ShiftMask,		XK_b,		spawn,		SHCMD("~/.local/bin/blue.sh")},
 	{ ALTKEY|ShiftMask,		XK_l,		spawn,		SHCMD("slock")},
 	{ ALTKEY,			XK_p,		spawn,		SHCMD("brightnessctl set 5%+") },
 	{ ALTKEY, 			XK_l,		spawn,		SHCMD("brightnessctl set 5%-") },
