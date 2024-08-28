@@ -210,6 +210,7 @@ static const Key keys[] = {
 
 	{ MODKEY|ShiftMask,		XK_s,		spawn,		SHCMD("pkill -USR1 -x sxhkd") },
 	{ MODKEY|ShiftMask,		XK_f,		spawn,		SHCMD("~/.local/bin/scrot.sh")},
+	{ MODKEY|ShiftMask,		XK_x,		spawn,		SHCMD("~/.local/bin/xmodmap.sh")},
 	{ ALTKEY|ControlMask,		XK_Return,	spawn,		{.v = termcmd } },
 	{ ALTKEY|ControlMask,		XK_p,		spawn,		SHCMD("~/.local/bin/xcompmgr-toggle.sh")},
 	{ ALTKEY|ControlMask,		XK_o,		spawn,		SHCMD("~/.local/bin/xset.sh")},
@@ -220,7 +221,6 @@ static const Key keys[] = {
 	{ 0,				XK_F12,		spawn,		SHCMD("amixer -q sset Master 5%+") },
 	{ 0,				XK_F11,		spawn,		SHCMD("amixer -q sset Master 5%-") },
 	{ 0,				XK_F10,		spawn,		SHCMD("amixer -q sset Master toggle") },
-//	{ MODKEY,			XK_BackSpace,	spawn,		SHCMD("~/.local/bin/syslock.sh")},
 	{ ALTKEY|ShiftMask,		XK_r,		spawn,		{.v = (const char*[]){ TERMINAL, "-e", "sudo", "reboot", "-i",  NULL } } },
 	{ ALTKEY|ShiftMask,		XK_d,		spawn,		{.v = (const char*[]){ TERMINAL, "-e", "sudo", "poweroff", "-i",  NULL } } },
 
