@@ -5,6 +5,7 @@
 #define TERMCLASS "St"
 #define BROWSER "firefox"
 #define BIT "bleachbit"
+#define GIMP "gimp"
 
 /* appearance */
 static unsigned int borderpx  = 3;        // border pixel of windows
@@ -160,7 +161,8 @@ static const Key keys[] = {
 	{ MODKEY,			XK_w,		spawn,		{.v = (const char*[]){ BROWSER, NULL } } },
 	{ MODKEY|ShiftMask,		XK_w,		spawn,		{.v = (const char*[]){ TERMINAL, "-e", "nmtui", NULL } } },
 	{ MODKEY|ShiftMask,		XK_b,		spawn,		{.v = (const char*[]){ BIT, NULL } } },
-	{ MODKEY,			XK_p,		spawn,		SHCMD(TERMINAL " -e alsamixer ") },
+	{ MODKEY,			XK_y,		spawn,		{.v = (const char*[]){ GIMP, NULL } } },
+	{ MODKEY,			XK_p,		spawn,		SHCMD(TERMINAL " -e pulsemixer") },
 	{ MODKEY,			XK_Escape,	spawn,		SHCMD(TERMINAL " -e htop") },
 	//{ MODKEY|ShiftMask,		XK_backslash,	spawn,		{.v = (const char*[]){ TERMINAL, "-e", "lf", NULL } } },
 	{ MODKEY,                       XK_r,  	   	togglefloating, {0} },
@@ -220,9 +222,9 @@ static const Key keys[] = {
 	{ ALTKEY|ShiftMask,		XK_l,		spawn,		SHCMD("slock")},
 	{ ALTKEY,			XK_p,		spawn,		SHCMD("xbacklight -inc 5%") },
 	{ ALTKEY, 			XK_l,		spawn,		SHCMD("xbacklight -dec 5%") },
-	{ 0,				XK_F12,		spawn,		SHCMD("amixer -q sset Master 5%+") },
-	{ 0,				XK_F11,		spawn,		SHCMD("amixer -q sset Master 5%-") },
-	{ 0,				XK_F10,		spawn,		SHCMD("amixer -q sset Master toggle") },
+	{ 0,				XK_F12,		spawn,		SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 0%- && wpctl set-volume @DEFAULT_AUDIO_SINK@ 3%+") },
+	{ 0,				XK_F11,		spawn,		SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 0%- && wpctl set-volume @DEFAULT_AUDIO_SINK@ 3%-") },
+	{ 0,				XK_F10,		spawn,		SHCMD("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle") },
 	{ ALTKEY|ShiftMask,		XK_r,		spawn,		{.v = (const char*[]){ TERMINAL, "-e", "sudo", "reboot", "-i",  NULL } } },
 	{ ALTKEY|ShiftMask,		XK_d,		spawn,		{.v = (const char*[]){ TERMINAL, "-e", "sudo", "poweroff", "-i",  NULL } } },
 
@@ -234,11 +236,13 @@ static const Key keys[] = {
 
 	{ 0, XF86XK_MonBrightnessUp,	spawn,		SHCMD("xbacklight -inc 5%") },
 	{ 0, XF86XK_MonBrightnessDown,	spawn,		SHCMD("xbacklight -dec 5%") },
-	{ 0, XF86XK_AudioRaiseVolume,	spawn,		SHCMD("amixer -q sset Master 5%+") },
-	{ 0, XF86XK_AudioLowerVolume,	spawn,		SHCMD("amixer -q sset Master 5%-") },
-	{ 0, XF86XK_AudioMute,		spawn,		SHCMD("amixer -q sset Master toggle") },
+	{ 0, XF86XK_AudioRaiseVolume,	spawn,		SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 0%- && wpctl set-volume @DEFAULT_AUDIO_SINK@ 3%+") },
+	{ 0, XF86XK_AudioLowerVolume,	spawn,		SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 0%- && wpctl set-volume @DEFAULT_AUDIO_SINK@ 3%-") },
+	{ 0, XF86XK_AudioMute,		spawn,		SHCMD("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle") },
+	{ 0, XF86XK_AudioMicMute,	spawn,		SHCMD("pactl set-source-mute @DEFAULT_SOURCE@ toggle") },
 
 	{ MODKEY,			XK_F11,		spawn,		SHCMD("mpv --untimed --no-cache --no-osc --no-input-default-bindings --profile=low-latency --input-conf=/dev/null --title=webcam $(ls /dev/video[0,2,4,6,8] | tail -n 1)") },
+	{ MODKEY,			XK_F12,		spawn,		SHCMD("killall ffmpeg") },
 
 };
 
