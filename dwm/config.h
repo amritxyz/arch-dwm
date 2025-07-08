@@ -19,7 +19,7 @@ static int swallowfloating	= 0;	// 1 means swallow floating windows by default
 static int smartgaps		= 0;	// 1 means no outer gap when there is only one window
 static int showbar		= 1;	// 0 means no bar
 static int topbar		= 1;	// 0 means bottom bar
-static char *fonts[]		= { "Hack:weight=bold:size=9:antialias=true:autohint=true", "NotoColorEmoji:pixelsize=10:antialias=true:autohint=true"  };
+static char *fonts[]		= { "monospace:weight=bold:size=9:antialias=true:autohint=true", "NotoColorEmoji:pixelsize=10:antialias=true:autohint=true"  };
 static char normbgcolor[]	= "#222222";
 static char normbordercolor[]	= "#444444";
 static char normfgcolor[]	= "#bbbbbb";
@@ -37,7 +37,7 @@ typedef struct {
 	const void *cmd;
 } Sp;
 const char *spcmd1[] = {TERMINAL, "-n", "spterm", "-g", "120x34", NULL };
-const char *spcmd2[] = {TERMINAL, "-n", "spcalc", "-f", "Hack:weight=bold:size=12", "-g", "50x20", "-e", "bc", "-lq", NULL };
+const char *spcmd2[] = {TERMINAL, "-n", "spcalc", "-f", "monospace:weight=bold:size=12", "-g", "50x20", "-e", "bc", "-lq", NULL };
 static Sp scratchpads[] = {
 	/* name          cmd  */
 	{"spterm",      spcmd1},
