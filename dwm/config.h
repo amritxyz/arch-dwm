@@ -5,7 +5,7 @@
 #define TERMCLASS "St"
 #define BROWSER "chromium"
 #define BIT "bleachbit"
-#define TORR "deluge-gtk"
+#define TORR "transmission-gtk"
 #define GIMP "gimp"
 
 /* appearance */
