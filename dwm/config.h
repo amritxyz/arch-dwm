@@ -219,9 +219,9 @@ static const Key keys[] = {
 	{ ALTKEY|ShiftMask,		XK_l,		spawn,		SHCMD("slock")},
 	{ ALTKEY,			XK_p,		spawn,		SHCMD("brightnessctl set 5%+") },
 	{ ALTKEY, 			XK_l,		spawn,		SHCMD("brightnessctl set 5%-") },
-	{ 0,				XK_F12,		spawn,		SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 0%- && wpctl set-volume @DEFAULT_AUDIO_SINK@ 3%+") },
-	{ 0,				XK_F11,		spawn,		SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 0%- && wpctl set-volume @DEFAULT_AUDIO_SINK@ 3%-") },
-	{ 0,				XK_F10,		spawn,		SHCMD("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle") },
+	{ 0,				XK_F12,		spawn,		SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 0%- && wpctl set-volume @DEFAULT_AUDIO_SINK@ 3%+; kill -44 $(pidof dwmblocks)") },
+	{ 0,				XK_F11,		spawn,		SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 0%- && wpctl set-volume @DEFAULT_AUDIO_SINK@ 3%-; kill -44 $(pidof dwmblocks)") },
+	{ 0,				XK_F10,		spawn,		SHCMD("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle; kill -44 $(pidof dwmblocks)") },
 	{ ALTKEY|ShiftMask,		XK_r,		spawn,		{.v = (const char*[]){ TERMINAL, "-e", "sudo", "reboot", "-i",  NULL } } },
 	{ ALTKEY|ShiftMask,		XK_d,		spawn,		{.v = (const char*[]){ TERMINAL, "-e", "sudo", "poweroff", "-i",  NULL } } },
 
@@ -233,9 +233,9 @@ static const Key keys[] = {
 
 	{ 0, XF86XK_MonBrightnessUp,	spawn,		SHCMD("brightnessctl set 5%+") },
 	{ 0, XF86XK_MonBrightnessDown,	spawn,		SHCMD("brightnessctl set 5%-") },
-	{ 0, XF86XK_AudioRaiseVolume,	spawn,		SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 0%- && wpctl set-volume @DEFAULT_AUDIO_SINK@ 3%+") },
-	{ 0, XF86XK_AudioLowerVolume,	spawn,		SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 0%- && wpctl set-volume @DEFAULT_AUDIO_SINK@ 3%-") },
-	{ 0, XF86XK_AudioMute,		spawn,		SHCMD("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle") },
+	{ 0, XF86XK_AudioMute,		spawn,		SHCMD("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle; kill -44 $(pidof dwmblocks)") },
+	{ 0, XF86XK_AudioRaiseVolume,	spawn,		SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 0%- && wpctl set-volume @DEFAULT_AUDIO_SINK@ 3%+; kill -44 $(pidof dwmblocks)") },
+	{ 0, XF86XK_AudioLowerVolume,	spawn,		SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 0%+ && wpctl set-volume @DEFAULT_AUDIO_SINK@ 3%-; kill -44 $(pidof dwmblocks)") },
 	{ 0, XF86XK_AudioMicMute,	spawn,		SHCMD("pactl set-source-mute @DEFAULT_SOURCE@ toggle") },
 
 	{ MODKEY,			XK_F11,		spawn,		SHCMD("mpv --untimed --no-cache --no-osc --no-input-default-bindings --profile=low-latency --input-conf=/dev/null --title=webcam $(ls /dev/video[0,2,4,6,8] | tail -n 1)") },
