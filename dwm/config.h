@@ -3,7 +3,7 @@
 /* Constants */
 #define TERMINAL "st"
 #define TERMCLASS "St"
-#define BROWSER "chromium"
+#define BROWSER "firefox"
 #define BIT "bleachbit"
 #define TORR "transmission-gtk"
 #define GIMP "gimp"
@@ -19,6 +19,7 @@ static int swallowfloating	= 0;	// 1 means swallow floating windows by default
 static int smartgaps		= 0;	// 1 means no outer gap when there is only one window
 static int showbar		= 1;	// 0 means no bar
 static int topbar		= 1;	// 0 means bottom bar
+static const int focusonwheel       = 0;
 static char *fonts[]		= { "monospace:weight=bold:size=9:antialias=true:autohint=true", "NotoColorEmoji:pixelsize=10:antialias=true:autohint=true"  };
 static char normbgcolor[]	= "#222222";
 static char normbordercolor[]	= "#444444";
@@ -165,7 +166,7 @@ static const Key keys[] = {
 	{ MODKEY,			XK_e,		spawn,		{.v = (const char*[]){ TORR, NULL } } },
 	{ MODKEY,			XK_y,		spawn,		{.v = (const char*[]){ GIMP, NULL } } },
 	{ MODKEY,			XK_p,		spawn,		SHCMD(TERMINAL " -e pulsemixer") },
-	{ MODKEY,			XK_Escape,	spawn,		SHCMD(TERMINAL " -e htop") },
+	{ MODKEY,			XK_Escape,	spawn,		SHCMD(TERMINAL " -e htop || pkill htop") },
 	//{ MODKEY|ShiftMask,		XK_backslash,	spawn,		{.v = (const char*[]){ TERMINAL, "-e", "lf", NULL } } },
 	{ MODKEY,			XK_r,		togglefloating, {0} },
 	//{ MODKEY|ShiftMask,		XK_r,		togglefloating,	{0} },
