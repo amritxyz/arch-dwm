@@ -159,7 +159,8 @@ static const Key keys[] = {
 	{ MODKEY,			XK_Tab,		view,		{0} },
 	//{ MODKEY|ShiftMask,		XK_Tab,		spawn,		SHCMD("") },
 	{ MODKEY,			XK_q,		killclient,	{0} },
-	{ MODKEY|ShiftMask,		XK_q,		quit,		{0} },
+	// { MODKEY|ShiftMask,		XK_q,		quit,		{0} },
+	{ MODKEY|ShiftMask,		XK_q,		spawn,		SHCMD("~/.local/bin/syslock") },
 	{ MODKEY,			XK_w,		spawn,		{.v = (const char*[]){ BROWSER, NULL } } },
 	{ MODKEY|ShiftMask,		XK_w,		spawn,		{.v = (const char*[]){ TERMINAL, "-e", "nmtui", NULL } } },
 	{ MODKEY|ShiftMask,		XK_b,		spawn,		{.v = (const char*[]){ BIT, NULL } } },
@@ -179,6 +180,7 @@ static const Key keys[] = {
 	{ MODKEY,			XK_u,		setlayout,	{.v = &layouts[2]} }, /* spiral */
 	{ MODKEY|ShiftMask,		XK_u,		setlayout,	{.v = &layouts[3]} }, /* dwindle */
 	//{ MODKEY|ShiftMask,		XK_backslash,	spawn,		SHCMD("") },
+	{ ALTKEY|ShiftMask,		XK_m,		spawn,		SHCMD("~/.local/bin/music.sh") },
 	{ MODKEY,			XK_a,		togglegaps,	{0} },
 	{ MODKEY|ShiftMask,		XK_a,		defaultgaps,	{0} },
 	{ MODKEY,			XK_s,		togglesticky,	{0} },
