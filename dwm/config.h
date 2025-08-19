@@ -163,7 +163,7 @@ static const Key keys[] = {
 	{ MODKEY|ShiftMask,		XK_w,		spawn,		{.v = (const char*[]){ TERMINAL, "-e", "nmtui", NULL } } },
 	{ MODKEY|ShiftMask,		XK_b,		spawn,		{.v = (const char*[]){ BIT, NULL } } },
 	{ MODKEY,			XK_p,		spawn,		SHCMD(TERMINAL " -e pulsemixer") },
-	{ MODKEY,			XK_Escape,	spawn,		SHCMD(TERMINAL " -e htop || pkill htop") },
+	{ MODKEY,			XK_Escape,	spawn,		SHCMD(TERMINAL " -e htop") },
 	//{ MODKEY|ShiftMask,		XK_backslash,	spawn,		{.v = (const char*[]){ TERMINAL, "-e", "lf", NULL } } },
 	{ MODKEY,			XK_r,		togglefloating, {0} },
 	//{ MODKEY|ShiftMask,		XK_r,		togglefloating,	{0} },
