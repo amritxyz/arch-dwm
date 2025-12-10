@@ -160,7 +160,8 @@ static const Key keys[] = {
 	// { MODKEY|ShiftMask,		XK_q,		quit,		{0} },
 	{ MODKEY|ShiftMask,		XK_q,		spawn,		SHCMD("~/.local/bin/syslock") },
 	{ MODKEY,			XK_w,		spawn,		{.v = (const char*[]){ BROWSER, NULL } } },
-	{ MODKEY|ShiftMask,		XK_w,		spawn,		{.v = (const char*[]){ TERMINAL, "-e", "nmtui", NULL } } },
+	{ MODKEY|ShiftMask,		XK_w,		spawn,		{.v = (const char*[]){ BROWSER, "--private-window", NULL } } },
+	{ MODKEY|ShiftMask,		XK_p,		spawn,		{.v = (const char*[]){ TERMINAL, "-e", "nmtui", NULL } } },
 	{ MODKEY|ShiftMask,		XK_b,		spawn,		{.v = (const char*[]){ BIT, NULL } } },
 	{ MODKEY,			XK_p,		spawn,		SHCMD(TERMINAL " -e pulsemixer") },
 	{ MODKEY,			XK_Escape,	spawn,		SHCMD(TERMINAL " -e htop") },
@@ -212,10 +213,10 @@ static const Key keys[] = {
 	{ MODKEY|ShiftMask,		XK_o,		spawn,		SHCMD("xdotool type --delay 0 $(label=$(grep -v '^#' ~/.local/share/key | awk '{print $2}' | dmenu -i -l 3 -p Key); grep -v '^#' ~/.local/share/key | awk -v pw=\"$label\" '$2 == pw {print $1; exit}')") },
 	/*{ MODKEY|ShiftMask,		XK_s,		spawn,		SHCMD("pkill -USR1 -x sxhkd") },*/
 	{ MODKEY|ShiftMask,		XK_f,		spawn,		SHCMD("~/.local/bin/scrot.sh")},
-	{ MODKEY|ShiftMask,		XK_x,		spawn,		SHCMD("~/.local/bin/setxkbmap.sh")},
+	{ MODKEY|ShiftMask,		XK_x,		spawn,		SHCMD("~/.local/bin/xorg.sh")},
 	{ ALTKEY|ControlMask,		XK_Return,	spawn,		{.v = termcmd } },
 	{ ALTKEY|ControlMask,		XK_p,		spawn,		SHCMD("~/.local/bin/xcompmgr-toggle.sh")},
-	{ ALTKEY|ControlMask,		XK_o,		spawn,		SHCMD("~/.local/bin/xset.sh")},
+	/*{ ALTKEY|ControlMask,		XK_o,		spawn,		SHCMD("")},*/
 	{ ALTKEY|ShiftMask,		XK_b,		spawn,		SHCMD("~/.local/bin/blue.sh")},
 	{ ALTKEY|ShiftMask,		XK_l,		spawn,		SHCMD("slock")},
 	{ ALTKEY,			XK_p,		spawn,		SHCMD("brightnessctl set -e4 5%+") },
