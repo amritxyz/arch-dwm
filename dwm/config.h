@@ -18,7 +18,7 @@ static int smartgaps		= 0;	// 1 means no outer gap when there is only one window
 static int showbar		= 1;	// 0 means no bar
 static int topbar		= 1;	// 0 means bottom bar
 static const int focusonwheel       = 0;
-static char *fonts[]		= { "monospace:weight=bold:size=9:antialias=true:autohint=true", "NotoColorEmoji:pixelsize=10:antialias=true:autohint=true"  };
+static char *fonts[]		= { "monospace:size=9:antialias=true:autohint=true", "NotoColorEmoji:pixelsize=12:antialias=true:autohint=true"  };
 static char normbgcolor[]	= "#222222";
 static char normbordercolor[]	= "#444444";
 static char normfgcolor[]	= "#bbbbbb";
@@ -35,12 +35,14 @@ typedef struct {
 	const char *name;
 	const void *cmd;
 } Sp;
-const char *spcmd1[] = {TERMINAL, "-n", "spterm", "-g", "120x34", NULL };
-const char *spcmd2[] = {TERMINAL, "-n", "spcalc", "-f", "monospace:weight=bold:size=12", "-g", "50x20", "-e", "bc", "-lq", NULL };
+const char *spcmd1[] = {TERMINAL, "-n", "spterm", "-g", "200x56", NULL };
+const char *spcmd2[] = {TERMINAL, "-n", "spcalc", "-f", "monospace:size=12", "-g", "50x20", "-e", "bc", "-lq", NULL };
+const char *spcmd3[] = {TERMINAL, "-n", "sptop", "-g", "200x56", "-e", "htop", NULL };
 static Sp scratchpads[] = {
 	/* name          cmd  */
 	{"spterm",      spcmd1},
 	{"spcalc",      spcmd2},
+	{"sptop",      spcmd3},
 };
 
 /* tagging */
@@ -59,6 +61,7 @@ static const Rule rules[] = {
 	{ TERMCLASS,	"bg",		NULL,		1 << 7,		0,		1,		0,		-1 },
 	{ TERMCLASS,	"spterm",	NULL,		SPTAG(0),	1,		1,		0,		-1 },
 	{ TERMCLASS,	"spcalc",	NULL,		SPTAG(1),	1,		1,		0,		-1 },
+	{ TERMCLASS,	"sptop",	NULL,		SPTAG(2),	1,		1,		0,		-1 },
 };
 
 /* layout(s) */
@@ -164,7 +167,7 @@ static const Key keys[] = {
 	{ MODKEY|ShiftMask,		XK_p,		spawn,		{.v = (const char*[]){ TERMINAL, "-e", "nmtui", NULL } } },
 	{ MODKEY|ShiftMask,		XK_b,		spawn,		{.v = (const char*[]){ BIT, NULL } } },
 	{ MODKEY,			XK_p,		spawn,		SHCMD(TERMINAL " -e pulsemixer") },
-	{ MODKEY,			XK_Escape,	spawn,		SHCMD(TERMINAL " -e htop") },
+	{ MODKEY,			XK_Escape,	togglescratch,	{.ui = 2} },
 	//{ MODKEY|ShiftMask,		XK_backslash,	spawn,		{.v = (const char*[]){ TERMINAL, "-e", "lf", NULL } } },
 	{ MODKEY,			XK_r,		togglefloating, {0} },
 	//{ MODKEY|ShiftMask,		XK_r,		togglefloating,	{0} },
@@ -181,7 +184,7 @@ static const Key keys[] = {
 	{ MODKEY,			XK_a,		togglegaps,	{0} },
 	{ MODKEY|ShiftMask,		XK_a,		defaultgaps,	{0} },
 	{ MODKEY,			XK_s,		togglesticky,	{0} },
-	//{ MODKEY|ShiftMask,		XK_s,		spawn,		SHCMD("") },
+	{ MODKEY|ShiftMask,		XK_s,		spawn,		SHCMD("~/.local/bin/displayselect") },
 	{ MODKEY,			XK_d,		spawn,          {.v = (const char*[]){ "dmenu_run", NULL } } },
 	{ MODKEY,			XK_f,		togglefullscr,	{0} },
 	//{ MODKEY|ShiftMask,		XK_f,		setlayout,	{.v = &layouts[8]} },
