@@ -43,11 +43,13 @@ typedef struct {
 const char *spcmd1[] = {TERMINAL, "-n", "spterm", "-g", "200x56", NULL };
 const char *spcmd2[] = {TERMINAL, "-n", "spcalc", "-f", "monospace:size=12", "-g", "50x20", "-e", "bc", "-lq", NULL };
 const char *spcmd3[] = {TERMINAL, "-n", "sptop", "-g", "200x56", "-e", "htop", NULL };
+const char *spcmd4[] = {TERMINAL, "-n", "spmixer", "-g", "100x28", "-e", "pulsemixer", NULL };
 static Sp scratchpads[] = {
 	/* name          cmd  */
 	{"spterm",      spcmd1},
 	{"spcalc",      spcmd2},
 	{"sptop",      spcmd3},
+	{"spmixer",      spcmd4},
 };
 
 /* tagging */
@@ -67,6 +69,7 @@ static const Rule rules[] = {
 	{ TERMCLASS,	"spterm",	NULL,		SPTAG(0),	1,		1,		0,		-1 },
 	{ TERMCLASS,	"spcalc",	NULL,		SPTAG(1),	1,		1,		0,		-1 },
 	{ TERMCLASS,	"sptop",	NULL,		SPTAG(2),	1,		1,		0,		-1 },
+	{ TERMCLASS,	"spmixer",	NULL,		SPTAG(3),	1,		1,		0,		-1 },
 };
 
 /* layout(s) */
@@ -171,7 +174,7 @@ static const Key keys[] = {
 	{ MODKEY|ShiftMask,		XK_w,		spawn,		{.v = (const char*[]){ BROWSER, "--private-window", NULL } } },
 	{ MODKEY|ShiftMask,		XK_p,		spawn,		{.v = (const char*[]){ TERMINAL, "-e", "nmtui", NULL } } },
 	{ MODKEY|ShiftMask,		XK_b,		spawn,		{.v = (const char*[]){ BIT, NULL } } },
-	{ MODKEY,			XK_p,		spawn,		SHCMD(TERMINAL " -e pulsemixer") },
+	{ MODKEY,			XK_p,		togglescratch,	{.ui = 3} },
 	{ MODKEY,			XK_Escape,	togglescratch,	{.ui = 2} },
 	//{ MODKEY|ShiftMask,		XK_backslash,	spawn,		{.v = (const char*[]){ TERMINAL, "-e", "lf", NULL } } },
 	{ MODKEY,			XK_r,		togglefloating, {0} },
