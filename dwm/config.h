@@ -44,12 +44,14 @@ const char *spcmd1[] = {TERMINAL, "-n", "spterm", "-g", "200x56", NULL };
 const char *spcmd2[] = {TERMINAL, "-n", "spcalc", "-f", "monospace:size=12", "-g", "50x20", "-e", "bc", "-lq", NULL };
 const char *spcmd3[] = {TERMINAL, "-n", "sptop", "-g", "200x56", "-e", "htop", NULL };
 const char *spcmd4[] = {TERMINAL, "-n", "spmixer", "-g", "100x28", "-e", "pulsemixer", NULL };
+const char *spcmd5[] = {TERMINAL, "-n", "spcmus", "-g", "200x56", "-e", "cmus", NULL };
 static Sp scratchpads[] = {
 	/* name          cmd  */
 	{"spterm",      spcmd1},
 	{"spcalc",      spcmd2},
 	{"sptop",      spcmd3},
 	{"spmixer",      spcmd4},
+	{"spcmus",      spcmd5},
 };
 
 /* tagging */
@@ -70,6 +72,7 @@ static const Rule rules[] = {
 	{ TERMCLASS,	"spcalc",	NULL,		SPTAG(1),	1,		1,		0,		-1 },
 	{ TERMCLASS,	"sptop",	NULL,		SPTAG(2),	1,		1,		0,		-1 },
 	{ TERMCLASS,	"spmixer",	NULL,		SPTAG(3),	1,		1,		0,		-1 },
+	{ TERMCLASS,	"spcmus",	NULL,		SPTAG(4),	1,		1,		0,		-1 },
 };
 
 /* layout(s) */
@@ -202,6 +205,7 @@ static const Key keys[] = {
 	{ MODKEY|ShiftMask,		XK_g,		shifttag,	{ .i = -1 } },
 	{ MODKEY,			XK_h,		setmfact,	{.f = -0.05} },
 	{ MODKEY,			XK_l,		setmfact,      	{.f = +0.05} },
+	{ MODKEY|ShiftMask,		XK_i,		togglescratch,	{.ui = 4} },
 	{ MODKEY,			XK_i,		spawn,		{.v = (const char*[]){ TERMINAL, "-e", "lf", NULL } } },
 	{ MODKEY,			XK_semicolon,	shiftview,	{ .i = 1 } },
 	{ MODKEY|ShiftMask,		XK_semicolon,	shifttag,	{ .i = 1 } },
