@@ -227,7 +227,8 @@ static const Key keys[] = {
 	{ MODKEY,			XK_o,		spawn,		SHCMD("xdotool type --delay 0 $(grep -v '^#' ~/.local/share/snippets | dmenu -i -l 10 -p Snippets | cut -d' ' -f1)") },
 	{ MODKEY|ShiftMask,		XK_o,		spawn,		SHCMD("xdotool type --delay 0 $(label=$(grep -v '^#' ~/.local/share/key | awk '{print $2}' | dmenu -i -l 3 -p Key); grep -v '^#' ~/.local/share/key | awk -v pw=\"$label\" '$2 == pw {print $1; exit}')") },
 	/*{ MODKEY|ShiftMask,		XK_s,		spawn,		SHCMD("pkill -USR1 -x sxhkd") },*/
-	{ MODKEY|ShiftMask,		XK_f,		spawn,		SHCMD("~/.local/bin/scrot.sh")},
+	{ ALTKEY|ShiftMask,		XK_x,		spawn,		SHCMD("~/.local/bin/ss.sh")},
+	{ ALTKEY,			XK_x,		spawn,		SHCMD("~/.local/bin/tmp-ss.sh")},
 	{ MODKEY|ShiftMask,		XK_x,		spawn,		SHCMD("~/.local/bin/xorg.sh")},
 	{ ALTKEY|ControlMask,		XK_Return,	spawn,		{.v = termcmd } },
 	{ ALTKEY|ControlMask,		XK_p,		spawn,		SHCMD("~/.local/bin/xcompmgr-toggle.sh")},
@@ -242,8 +243,8 @@ static const Key keys[] = {
 	{ 0,				XK_F3,		spawn,		SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 0%- && wpctl set-volume @DEFAULT_AUDIO_SINK@ 2%+; kill -44 $(pidof dwmblocks)") },
 	{ 0,				XK_F2,		spawn,		SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 0%- && wpctl set-volume @DEFAULT_AUDIO_SINK@ 2%-; kill -44 $(pidof dwmblocks)") },
 	{ 0,				XK_F1,		spawn,		SHCMD("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle; kill -44 $(pidof dwmblocks)") },
-	{ ALTKEY|ShiftMask,		XK_r,		spawn,		{.v = (const char*[]){ TERMINAL, "-e", "sudo", "reboot", "-i",  NULL } } },
-	{ ALTKEY|ShiftMask,		XK_d,		spawn,		{.v = (const char*[]){ TERMINAL, "-e", "sudo", "poweroff", "-i",  NULL } } },
+	// { ALTKEY|ShiftMask,		XK_r,		spawn,		{.v = (const char*[]){ TERMINAL, "-e", "sudo", "reboot", "-i",  NULL } } },
+	// { ALTKEY|ShiftMask,		XK_d,		spawn,		{.v = (const char*[]){ TERMINAL, "-e", "sudo", "poweroff", "-i",  NULL } } },
 
 	{ MODKEY,			XK_Left,	focusmon,	{.i = -1 } },
 	{ MODKEY|ShiftMask,		XK_Left,	tagmon,		{.i = -1 } },
