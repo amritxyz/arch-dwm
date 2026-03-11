@@ -231,7 +231,7 @@ static const Key keys[] = {
 	{ ALTKEY,			XK_x,		spawn,		SHCMD("~/.local/bin/tmp-ss.sh")},
 	{ MODKEY|ShiftMask,		XK_x,		spawn,		SHCMD("~/.local/bin/xorg.sh")},
 	{ ALTKEY|ControlMask,		XK_Return,	spawn,		{.v = termcmd } },
-	{ ALTKEY|ControlMask,		XK_p,		spawn,		SHCMD("~/.local/bin/xcompmgr-toggle.sh")},
+	// { ALTKEY|ControlMask,		XK_p,		spawn,		SHCMD("~/.local/bin/xcompmgr-toggle.sh")},
 	/*{ ALTKEY|ControlMask,		XK_o,		spawn,		SHCMD("")},*/
 	{ ALTKEY|ShiftMask,		XK_b,		spawn,		SHCMD("~/.local/bin/blue.sh")},
 	{ ALTKEY|ShiftMask,		XK_l,		spawn,		SHCMD("slock")},
