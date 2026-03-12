@@ -317,7 +317,7 @@ static pid_t winpid(Window w);
 
 /* variables */
 static Systray *systray = NULL;
-static const unsigned int systrayiconpadding = 4; /* INFO: For icons size */
+static const unsigned int systrayiconpadding = 6; /* INFO: For icons size */
 static const char broken[] = "broken";
 static char stext[256];
 static char rawstext[256];
