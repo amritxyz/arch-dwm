@@ -266,6 +266,12 @@ static void setup(void);
 static void seturgent(Client *c, int urg);
 static void showhide(Client *c);
 static void sigchld(int unused);
+
+#ifndef __OpenBSD__
+static int getdwmblockspid();
+static void sigdwmblocks(const Arg *arg);
+#endif
+
 static void sighup(int unused);
 static void sigterm(int unused);
 static void spawn(const Arg *arg);
@@ -601,7 +607,8 @@ buttonpress(XEvent *e)
 		} else if (ev->x < x + TEXTW(selmon->ltsymbol))
 			click = ClkLtSymbol;
 		// else if (ev->x > (x = selmon->ww - (int)TEXTW(stext) + lrpad)) {
-		else if (ev->x > selmon->ww - (int)TEXTW(stext) - getsystraywidth()) {
+		// else if (ev->x > selmon->ww - (int)TEXTW(stext) - getsystraywidth()) { // FIX: False patched line
+		else if (ev->x > (x = selmon->ww - (int)TEXTW(stext) + lrpad - getsystraywidth())) {
 			click = ClkStatusText;
 
 			char *text = rawstext;
@@ -1146,6 +1153,20 @@ getrootptr(int *x, int *y)
 
 	return XQueryPointer(dpy, root, &dummy, &dummy, x, y, &di, &di, &dui);
 }
+
+#ifndef __OpenBSD__
+int
+getdwmblockspid()
+{
+	char buf[16];
+	FILE *fp = popen("pidof -s dwmblocks", "r");
+	fgets(buf, sizeof(buf), fp);
+	pid_t pid = strtoul(buf, NULL, 10);
+	pclose(fp);
+	dwmblockspid = pid;
+	return pid != 0 ? 0 : -1;
+}
+#endif
 
 long
 getstate(Window w)
@@ -2056,6 +2077,25 @@ sigterm(int unused)
 	Arg a = {.i = 0};
 	quit(&a);
 }
+
+#ifndef __OpenBSD__
+void
+sigdwmblocks(const Arg *arg)
+{
+	union sigval sv;
+	sv.sival_int = 0 | (dwmblockssig << 8) | arg->i;
+	if (!dwmblockspid)
+		if (getdwmblockspid() == -1)
+			return;
+
+	if (sigqueue(dwmblockspid, SIGUSR1, sv) == -1) {
+		if (errno == ESRCH) {
+			if (!getdwmblockspid())
+				sigqueue(dwmblockspid, SIGUSR1, sv);
+		}
+	}
+}
+#endif
 
 void
 sigchld(int unused)
