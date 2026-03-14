@@ -53,9 +53,11 @@ int allowwindowops = 0;
  * within this range, st draws when content stops arriving (idle). mostly it's
  * near minlatency, but it waits longer for slow updates to avoid partial draw.
  * low minlatency will tear/flicker more, as it can "detect" idle too early.
+ * INFO: Defaults
+ * min&max.{latency} = 8, 33;
  */
-static double minlatency = 8;
-static double maxlatency = 33;
+static double minlatency = 1;
+static double maxlatency = 3;
 
 /*
  * blinking timeout (set to 0 to disable blinking) for the terminal blinking
