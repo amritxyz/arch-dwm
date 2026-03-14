@@ -20,6 +20,8 @@
  *
  * To understand everything else, start reading main().
  */
+
+#include <dirent.h>
 #include <errno.h>
 #include <locale.h>
 #include <signal.h>
@@ -320,6 +322,7 @@ static Client *swallowingclient(Window w);
 static Client *termforwin(const Client *c);
 static pid_t winpid(Window w);
 
+static pid_t procop(const char *name, int kill_all);
 
 /* variables */
 static Systray *systray = NULL;
@@ -1154,17 +1157,52 @@ getrootptr(int *x, int *y)
 	return XQueryPointer(dpy, root, &dummy, &dummy, x, y, &di, &di, &dui);
 }
 
+pid_t
+procop(const char *name, int kill_all)
+{
+	DIR *dir = opendir("/proc");
+	if (!dir) return -1;
+
+	size_t namelen = strlen(name);
+	if (namelen > 15) namelen = 15;
+
+	pid_t found = 0;
+	struct dirent *entry;
+	while ((entry = readdir(dir)) != NULL) {
+		if (entry->d_name[0] < '1' || entry->d_name[0] > '9') continue;
+
+		char path[64];
+		snprintf(path, sizeof(path), "/proc/%.20s/comm", entry->d_name);
+
+		FILE *fp = fopen(path, "r");
+		if (!fp) continue;
+
+		char comm[16];
+		int matched = fgets(comm, sizeof(comm), fp) &&
+			strncmp(comm, name, namelen) == 0 &&
+			(comm[namelen] == '\n' || comm[namelen] == '\0');
+		fclose(fp);
+
+		if (matched) {
+			found = (pid_t)atoi(entry->d_name);
+			if (kill_all)
+				kill(found, SIGTERM);
+			else
+				break;
+		}
+	}
+	closedir(dir);
+	return found > 0 ? found : -1;
+}
+
 #ifndef __OpenBSD__
 int
-getdwmblockspid()
+getdwmblockspid(void)
 {
-	char buf[16];
-	FILE *fp = popen("pidof -s dwmblocks", "r");
-	fgets(buf, sizeof(buf), fp);
-	pid_t pid = strtoul(buf, NULL, 10);
-	pclose(fp);
-	dwmblockspid = pid;
-	return pid != 0 ? 0 : -1;
+	pid_t pid = procop("dwmblocks", 0);
+	if (pid > 0)
+		dwmblockspid = pid;
+	return pid > 0 ? 0 : -1;
 }
 #endif
 
@@ -2149,6 +2187,19 @@ tagmon(const Arg *arg)
 void
 togglebar(const Arg *arg)
 {
+	if (selmon->showbar) {
+		procop("dwmblocks", 1);
+		dwmblockspid = 0;
+	} else if (getdwmblockspid() != 0) {
+		pid_t pid = fork();
+		if (pid == 0) {
+			setsid();
+			execlp("dwmblocks", "dwmblocks", NULL);
+			_exit(1);
+		} else if (pid > 0) {
+			dwmblockspid = pid;
+		}
+	}
 	selmon->showbar = !selmon->showbar;
 	updatebarpos(selmon);
 	resizebarwin(selmon);

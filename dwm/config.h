@@ -42,7 +42,7 @@ typedef struct {
 } Sp;
 const char *spcmd1[] = {TERMINAL, "-n", "spterm", "-g", "150x42", NULL };
 const char *spcmd2[] = {TERMINAL, "-n", "spcalc", "-f", "monospace:size=12", "-g", "50x20", "-e", "bc", "-lq", NULL };
-const char *spcmd3[] = {TERMINAL, "-n", "sptop", "-g", "150x42", "-e", "htop", NULL };
+const char *spcmd3[] = {TERMINAL, "-n", "sptop", "-g", "150x42", "-e", "btop", NULL };
 const char *spcmd4[] = {TERMINAL, "-n", "spmixer", "-g", "75x21", "-e", "pulsemixer", NULL };
 const char *spcmd5[] = {TERMINAL, "-n", "spcmus", "-g", "150x42", "-e", "cmus", NULL };
 static Sp scratchpads[] = {
@@ -66,6 +66,7 @@ static const Rule rules[] = {
 	{ "Gimp",	NULL,		NULL,		1 << 8,		0,		0,		0,		-1 },
 	{ TERMCLASS,	NULL,		NULL,		0,		0,		1,		0,		-1 },
 	{ NULL,		NULL,		"Event Tester",	0,		0,		0,		1,		-1 },
+	{ TERMCLASS,	NULL,		"fterm",	0,		1,		1,		0,		-1 },
 	{ TERMCLASS,	"floatterm",	NULL,		0,		1,		1,		0,		-1 },
 	{ TERMCLASS,	"bg",		NULL,		1 << 7,		0,		1,		0,		-1 },
 	{ TERMCLASS,	"spterm",	NULL,		SPTAG(0),	1,		1,		0,		-1 },
