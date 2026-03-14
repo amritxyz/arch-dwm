@@ -61,7 +61,6 @@
 #define ISINC(X)                ((X) > 1000 && (X) < 3000)
 #define ISVISIBLE(C)            ((C->tags & C->mon->tagset[C->mon->seltags]) || C->issticky)
 #define PREVSEL                 3000
-#define LENGTH(X)               (sizeof X / sizeof X[0])
 #define MOUSEMASK               (BUTTONMASK|PointerMotionMask)
 #define MOD(N,M)                ((N)%(M) < 0 ? (N)%(M) + (M) : (N)%(M))
 #define WIDTH(X)                ((X)->w + 2 * (X)->bw)
@@ -612,7 +611,8 @@ buttonpress(XEvent *e)
 			click = ClkLtSymbol;
 		// else if (ev->x > (x = selmon->ww - (int)TEXTW(stext) + lrpad)) {
 		// else if (ev->x > selmon->ww - (int)TEXTW(stext) - getsystraywidth()) { // FIX: False patched line
-		else if (ev->x > (x = selmon->ww - (int)TEXTW(stext) + lrpad - getsystraywidth())) {
+		// else if (ev->x > (x = selmon->ww - (int)TEXTW(stext) + lrpad - getsystraywidth())) {
+		else if (ev->x > (x = selmon->ww - (int)(TEXTW(stext) - lrpad + 2) - getsystraywidth())) {
 			click = ClkStatusText;
 
 			char *text = rawstext;
@@ -1890,12 +1890,10 @@ sendevent(Window w, Atom proto, int mask, long d0, long d1, long d2, long d3, lo
 void
 setfocus(Client *c)
 {
-	if (!c->neverfocus) {
+	if (!c->neverfocus)
 		XSetInputFocus(dpy, c->win, RevertToPointerRoot, CurrentTime);
-		XChangeProperty(dpy, root, netatom[NetActiveWindow],
-			XA_WINDOW, 32, PropModeReplace,
-			(unsigned char *) &(c->win), 1);
-	}
+	XChangeProperty(dpy, root, netatom[NetActiveWindow], XA_WINDOW, 32,
+			PropModeReplace, (unsigned char *)&c->win, 1);
 	sendevent(c->win, wmatom[WMTakeFocus], NoEventMask, wmatom[WMTakeFocus], CurrentTime, 0, 0, 0);
 }
 
@@ -2149,10 +2147,16 @@ sigchld(int unused)
 void
 spawn(const Arg *arg)
 {
+	struct sigaction sa;
+
 	if (fork() == 0) {
 		if (dpy)
 			close(ConnectionNumber(dpy));
 		setsid();
+		sigemptyset(&sa.sa_mask);
+		sa.sa_flags = 0;
+		sa.sa_handler = SIG_DFL;
+		sigaction(SIGCHLD, &sa, NULL);
 		execvp(((char **)arg->v)[0], (char **)arg->v);
 		die("dwm: execvp '%s' failed:", ((char **)arg->v)[0]);
 	}
