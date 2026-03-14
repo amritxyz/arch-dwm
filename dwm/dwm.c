@@ -23,6 +23,7 @@
 
 #include <dirent.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <locale.h>
 #include <signal.h>
 #include <stdarg.h>
@@ -1157,7 +1158,7 @@ getrootptr(int *x, int *y)
 	return XQueryPointer(dpy, root, &dummy, &dummy, x, y, &di, &di, &dui);
 }
 
-pid_t
+static pid_t
 procop(const char *name, int kill_all)
 {
 	DIR *dir = opendir("/proc");
@@ -1174,16 +1175,18 @@ procop(const char *name, int kill_all)
 		char path[64];
 		snprintf(path, sizeof(path), "/proc/%.20s/comm", entry->d_name);
 
-		FILE *fp = fopen(path, "r");
-		if (!fp) continue;
+		int fd = open(path, O_RDONLY);
+		if (fd < 0) continue;
 
 		char comm[16];
-		int matched = fgets(comm, sizeof(comm), fp) &&
-			strncmp(comm, name, namelen) == 0 &&
-			(comm[namelen] == '\n' || comm[namelen] == '\0');
-		fclose(fp);
+		ssize_t n = read(fd, comm, sizeof(comm) - 1);
+		close(fd);
 
-		if (matched) {
+		if (n <= 0) continue;
+		comm[n] = '\0';
+
+		if (strncmp(comm, name, namelen) == 0 &&
+		    (comm[namelen] == '\n' || comm[namelen] == '\0')) {
 			found = (pid_t)atoi(entry->d_name);
 			if (kill_all)
 				kill(found, SIGTERM);
