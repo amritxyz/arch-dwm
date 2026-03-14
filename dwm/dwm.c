@@ -271,7 +271,7 @@ static void showhide(Client *c);
 static void sigchld(int unused);
 
 #ifndef __OpenBSD__
-static int getdwmblockspid();
+static int getdwmblockspid(void);
 static void sigdwmblocks(const Arg *arg);
 #endif
 
@@ -332,7 +332,7 @@ static const char broken[] = "broken";
 static char stext[256];
 static char rawstext[256];
 static int dwmblockssig;
-pid_t dwmblockspid = 0;
+static pid_t dwmblockspid = 0;
 static int screen;
 static int sw, sh;           /* X display screen geometry width, height */
 static int bh;               /* bar height */
