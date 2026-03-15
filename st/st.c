@@ -2551,6 +2551,9 @@ tputc(Rune u)
 	Glyph *gp;
 
 	control = ISCONTROL(u);
+	/* in UTF-8 mode, ignore c1 control characters early */
+	if (IS_SET(MODE_UTF8) && ISCONTROLC1(u) && !(term.esc & ESC_STR))
+		return;
 	if (u < 127 || !IS_SET(MODE_UTF8)) {
 		c[0] = u;
 		width = len = 1;
@@ -2610,8 +2613,11 @@ check_control_code:
 	 */
 	if (control) {
 		/* in UTF-8 mode ignore handling C1 control characters */
-		if (IS_SET(MODE_UTF8) && ISCONTROLC1(u))
+		if (IS_SET(MODE_UTF8) && ISCONTROLC1(u)) {
+			if (term.esc & ESC_STR_END)
+				strhandle();
 			return;
+		}
 		tcontrolcode(u);
 		/*
 		 * control codes are not shown ever
@@ -2696,6 +2702,11 @@ twrite(const char *buf, int buflen, int show_ctrl)
 
 	for (n = 0; n < buflen; n += charsize) {
 		if (IS_SET(MODE_UTF8)) {
+			/* skip C1 bytes before utf8decode() mangles them */
+			if (ISCONTROLC1(buf[n] & 0xFF) && !(term.esc & ESC_STR)) {
+				charsize = 1;
+				continue;
+			}
 			/* process a complete utf8 char */
 			charsize = utf8decode(buf + n, &u, buflen - n);
 			if (charsize == 0)
