@@ -190,12 +190,36 @@ drw_scm_create(Drw *drw, const char *clrnames[], const unsigned int alphas[], si
 	Clr *ret;
 
 	/* need at least two colors for a scheme */
-	if (!drw || !clrnames || clrcount < 2 || !(ret = ecalloc(clrcount, sizeof(XftColor))))
+	if (!drw || !clrnames || clrcount < 2 || !(ret = ecalloc(clrcount, sizeof(Clr))))
 		return NULL;
 
 	for (i = 0; i < clrcount; i++)
 		drw_clr_create(drw, &ret[i], clrnames[i], alphas[i]);
 	return ret;
+}
+
+void
+drw_clr_free(Drw *drw, Clr *c)
+{
+	if (!drw || !c)
+		return;
+
+	/* c is typedef XftColor Clr */
+	XftColorFree(drw->dpy, DefaultVisual(drw->dpy, drw->screen),
+	             DefaultColormap(drw->dpy, drw->screen), c);
+}
+
+void
+drw_scm_free(Drw *drw, Clr *scm, size_t clrcount)
+{
+	size_t i;
+
+	if (!drw || !scm)
+		return;
+
+	for (i = 0; i < clrcount; i++)
+		drw_clr_free(drw, &scm[i]);
+	free(scm);
 }
 
 void
@@ -251,6 +275,8 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, unsigned int lp
 	} else {
 		XSetForeground(drw->dpy, drw->gc, drw->scheme[invert ? ColFg : ColBg].pixel);
 		XFillRectangle(drw->dpy, drw->drawable, drw->gc, x, y, w, h);
+		if (w < lpad)
+			return x + w;
 		d = XftDrawCreate(drw->dpy, drw->drawable, drw->visual, drw->cmap);
 		x += lpad;
 		w -= lpad;
