@@ -23,13 +23,13 @@ static int smartgaps		= 0;	// 1 means no outer gap when there is only one window
 static int showbar		= 1;	// 0 means no bar
 static int topbar		= 1;	// 0 means bottom bar
 static const int focusonwheel       = 0;
-static char *fonts[]		= { "monospace:size=11:antialias=true:autohint=true", "NotoColorEmoji:pixelsize=9:antialias=true:autohint=true"  };
-static char normbgcolor[]    = "#ffffff";
-static char normbordercolor[] = "#9f9f9f";
-static char normfgcolor[]    = "#000000";
-static char selfgcolor[]     = "#000000";
-static char selbordercolor[] = "#4250ef";
-static char selbgcolor[]     = "#c4d0ff";
+static char *fonts[]		= { "monospace:size=9:antialias=true:autohint=true", "NotoColorEmoji:pixelsize=7:antialias=true:autohint=true"  };
+static char normbgcolor[]	= "#222222";
+static char normbordercolor[]	= "#444444";
+static char normfgcolor[]	= "#bbbbbb";
+static char selfgcolor[]	= "#eeeeee";
+static char selbordercolor[]	= "#770000";
+static char selbgcolor[]	= "#005577";
 static char *colors[][3] = {
     /*           fg           bg           border   */
     [SchemeNorm] = { normfgcolor, normbgcolor, normbordercolor },
@@ -40,11 +40,11 @@ typedef struct {
 	const char *name;
 	const void *cmd;
 } Sp;
-const char *spcmd1[] = {TERMINAL, "-n", "spterm", "-g", "150x42", NULL };
+const char *spcmd1[] = {TERMINAL, "-n", "spterm", "-g", "200x56", NULL };
 const char *spcmd2[] = {TERMINAL, "-n", "spcalc", "-f", "monospace:size=12", "-g", "50x20", "-e", "bc", "-lq", NULL };
-const char *spcmd3[] = {TERMINAL, "-n", "sptop", "-g", "150x42", "-e", "btop", NULL };
-const char *spcmd4[] = {TERMINAL, "-n", "spmixer", "-g", "75x21", "-e", "pulsemixer", NULL };
-const char *spcmd5[] = {TERMINAL, "-n", "spcmus", "-g", "150x42", "-e", "cmus", NULL };
+const char *spcmd3[] = {TERMINAL, "-n", "sptop", "-g", "200x56", "-e", "btop", NULL };
+const char *spcmd4[] = {TERMINAL, "-n", "spmixer", "-g", "100x28", "-e", "pulsemixer", NULL };
+const char *spcmd5[] = {TERMINAL, "-n", "spcmus", "-g", "200x56", "-e", "cmus", NULL };
 static Sp scratchpads[] = {
 	/* name          cmd  */
 	{"spterm",      spcmd1},
@@ -232,7 +232,7 @@ static const Key keys[] = {
 	{ ALTKEY,			XK_x,		spawn,		SHCMD("~/.local/bin/tmp-ss.sh")},
 	{ MODKEY|ShiftMask,		XK_x,		spawn,		SHCMD("~/.local/bin/xorg.sh")},
 	{ ALTKEY|ControlMask,		XK_Return,	spawn,		{.v = termcmd } },
-	// { ALTKEY|ControlMask,		XK_p,		spawn,		SHCMD("~/.local/bin/xcompmgr-toggle.sh")},
+	{ ALTKEY|ControlMask,		XK_p,		spawn,		SHCMD("~/.local/bin/xcompmgr.sh")},
 	/*{ ALTKEY|ControlMask,		XK_o,		spawn,		SHCMD("")},*/
 	{ ALTKEY|ShiftMask,		XK_b,		spawn,		SHCMD("~/.local/bin/blue.sh")},
 	{ ALTKEY|ShiftMask,		XK_l,		spawn,		SHCMD("slock")},

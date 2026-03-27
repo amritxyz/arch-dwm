@@ -767,7 +767,7 @@ clientmessage(XEvent *e)
 	if (cme->message_type == netatom[NetWMState]) {
 		if (cme->data.l[1] == netatom[NetWMFullscreen]
 		|| cme->data.l[2] == netatom[NetWMFullscreen])
-			setfullscreen(c, (cme->data.l[0] == 1 /* _NET_WM_STATE_ADD    */
+			setfullscreen(c, (cme->data.l[0] == 1 /* _NET_WM_STATE_ADD */
 				|| (cme->data.l[0] == 2 /* _NET_WM_STATE_TOGGLE */ && !c->isfullscreen)));
 	} else if (cme->message_type == netatom[NetActiveWindow]) {
 		if (c != selmon->sel && !c->isurgent)
@@ -1108,7 +1108,7 @@ focusstack(const Arg *arg)
 		return;
 
 	for(p = NULL, c = selmon->clients; c && (i || !ISVISIBLE(c));
-	    i -= ISVISIBLE(c) ? 1 : 0, p = c, c = c->next);
+		i -= ISVISIBLE(c) ? 1 : 0, p = c, c = c->next);
 	focus(c ? c : p);
 	restack(selmon);
 	XWarpPointer(dpy, None, c->win, 0, 0, 0, 0, c->w/2, c->h/2); // Wrap mouse pointer
@@ -2245,8 +2245,8 @@ togglefloating(const Arg *arg)
 void
 togglefullscr(const Arg *arg)
 {
-  if(selmon->sel)
-    setfullscreen(selmon->sel, !selmon->sel->isfullscreen);
+	if(selmon->sel)
+		setfullscreen(selmon->sel, !selmon->sel->isfullscreen);
 }
 
 void
@@ -2341,7 +2341,7 @@ unmanage(Client *c, int destroyed)
 		free(s->swallowing);
 		s->swallowing = NULL;
 		arrange(m);
-        focus(NULL);
+		focus(NULL);
 		return;
 	}
 
@@ -2973,13 +2973,13 @@ zoom(const Arg *arg)
 void
 xrdb(const Arg *arg)
 {
-    load_xresources();
+	load_xresources();
 
-    for (int i = 0; i < LENGTH(colors); i++)
-        scheme[i] = drw_scm_create(drw, colors[i], 3);
+	for (int i = 0; i < LENGTH(colors); i++)
+			scheme[i] = drw_scm_create(drw, colors[i], 3);
 
-    focus(NULL);
-    arrange(NULL);
+	focus(NULL);
+	arrange(NULL);
 }
 
 void
