@@ -65,7 +65,7 @@ static const Rule rules[] = {
 	/* class	instance	title		tags mask	isfloating	isterminal	noswallow	monitor */
 	{ "Gimp",	NULL,		NULL,		1 << 8,		0,		0,		0,		-1 },
 	{ TERMCLASS,	NULL,		NULL,		0,		0,		1,		0,		-1 },
-	{ NULL,		NULL,		"Event Tester",	0,		0,		0,		1,		-1 },
+	{ NULL,		"floating_img",	NULL,		0,		1,		0,		1,		-1 },
 	{ TERMCLASS,	NULL,		"fterm",	0,		1,		1,		0,		-1 },
 	{ TERMCLASS,	"floatterm",	NULL,		0,		1,		1,		0,		-1 },
 	{ TERMCLASS,	"bg",		NULL,		1 << 7,		0,		1,		0,		-1 },
@@ -207,7 +207,7 @@ static const Key keys[] = {
 	{ MODKEY,			XK_h,		setmfact,	{.f = -0.05} },
 	{ MODKEY,			XK_l,		setmfact,      	{.f = +0.05} },
 	{ MODKEY|ShiftMask,		XK_i,		togglescratch,	{.ui = 4} },
-	{ MODKEY,			XK_i,		spawn,		{.v = (const char*[]){ TERMINAL, "-e", "lf", NULL } } },
+	{ MODKEY,			XK_i,		spawn,		{.v = (const char*[]){ TERMINAL, "-e", "lfub", NULL } } },
 	{ MODKEY,			XK_semicolon,	shiftview,	{ .i = 1 } },
 	{ MODKEY|ShiftMask,		XK_semicolon,	shifttag,	{ .i = 1 } },
 	{ MODKEY,			XK_apostrophe,	togglescratch,	{.ui = 1} },
@@ -266,7 +266,7 @@ static const Key keys[] = {
 	{ 0, XF86XK_AudioNext,		spawn,		SHCMD("playerctl next") },
 
 	{ MODKEY,			XK_F11,		spawn,		SHCMD("mpv --untimed --no-cache --no-osc --no-input-default-bindings --profile=low-latency --input-conf=/dev/null --title=webcam $(ls /dev/video[0,2,4,6,8] | tail -n 1)") },
-	{ MODKEY,			XK_BackSpace,	spawn,		SHCMD("killall ffmpeg") },
+	{ MODKEY,			XK_BackSpace,	spawn,		SHCMD("~/.local/bin/rec") },
 
 };
 
