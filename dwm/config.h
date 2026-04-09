@@ -65,7 +65,8 @@ static const Rule rules[] = {
 	/* class	instance	title		tags mask	isfloating	isterminal	noswallow	monitor */
 	{ "Gimp",	NULL,		NULL,		1 << 8,		0,		0,		0,		-1 },
 	{ TERMCLASS,	NULL,		NULL,		0,		0,		1,		0,		-1 },
-	{ NULL,		"floating_img",	NULL,		0,		1,		0,		1,		-1 },
+	{ NULL,		NULL,		"float_win",	0,		1,		0,		1,		-1 },
+	{ NULL,		"float_win",	NULL,		0,		1,		0,		1,		-1 },
 	{ TERMCLASS,	NULL,		"fterm",	0,		1,		1,		0,		-1 },
 	{ TERMCLASS,	"floatterm",	NULL,		0,		1,		1,		0,		-1 },
 	{ TERMCLASS,	"bg",		NULL,		1 << 7,		0,		1,		0,		-1 },
