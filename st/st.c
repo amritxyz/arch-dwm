@@ -33,7 +33,6 @@
 #define UTF_SIZ       4
 #define ESC_BUF_SIZ   (128*UTF_SIZ)
 #define ESC_ARG_SIZ   16
-#define CAR_PER_ARG   4
 #define STR_BUF_SIZ   ESC_BUF_SIZ
 #define STR_ARG_SIZ   ESC_ARG_SIZ
 #define HISTSIZE      2000
@@ -149,7 +148,6 @@ typedef struct {
 	int arg[ESC_ARG_SIZ];
 	int narg;              /* nb of args */
 	char mode[2];
-	int carg[ESC_ARG_SIZ][CAR_PER_ARG]; /* colon args */
 } CSIEscape;
 
 /* STR Escape sequence structs */
@@ -170,7 +168,6 @@ static void ttywriteraw(const char *, size_t);
 
 static void csidump(void);
 static void csihandle(void);
-static void readcolonargs(char **, int, int[][CAR_PER_ARG]);
 static void csiparse(void);
 static void csireset(void);
 static void osc_color_response(int, int, int);
@@ -996,9 +993,6 @@ tsetdirt(int top, int bot)
 {
 	int i;
 
-	if (term.row <= 0)
-		return;
-
 	LIMIT(top, 0, term.row-1);
 	LIMIT(bot, 0, term.row-1);
 
@@ -1183,7 +1177,7 @@ tscrollup(int orig, int n, int copyhist)
 void
 selscroll(int orig, int n)
 {
-	if (sel.ob.x == -1 || sel.alt != IS_SET(MODE_ALTSCREEN))
+	if (sel.ob.x == -1)
 		return;
 
 	if (BETWEEN(sel.nb.y, orig, term.bot) != BETWEEN(sel.ne.y, orig, term.bot)) {
@@ -1214,28 +1208,6 @@ tnewline(int first_col)
 }
 
 void
-readcolonargs(char **p, int cursor, int params[][CAR_PER_ARG])
-{
-	int i = 0;
-	for (; i < CAR_PER_ARG; i++)
-		params[cursor][i] = -1;
-
-	if (**p != ':')
-		return;
-
-	char *np = NULL;
-	i = 0;
-
-	while (**p == ':' && i < CAR_PER_ARG) {
-		while (**p == ':')
-			(*p)++;
-		params[cursor][i] = strtol(*p, &np, 10);
-		*p = np;
-		i++;
-	}
-}
-
-void
 csiparse(void)
 {
 	char *p = csiescseq.buf, *np;
@@ -1257,7 +1229,6 @@ csiparse(void)
 			v = -1;
 		csiescseq.arg[csiescseq.narg++] = v;
 		p = np;
-		readcolonargs(&p, csiescseq.narg-1, csiescseq.carg);
 		if (*p != ';' || csiescseq.narg == ESC_ARG_SIZ)
 			break;
 		p++;
@@ -1477,10 +1448,6 @@ tsetattr(const int *attr, int l)
 				ATTR_STRUCK     );
 			term.c.attr.fg = defaultfg;
 			term.c.attr.bg = defaultbg;
-			term.c.attr.ustyle = -1;
-			term.c.attr.ucolor[0] = -1;
-			term.c.attr.ucolor[1] = -1;
-			term.c.attr.ucolor[2] = -1;
 			break;
 		case 1:
 			term.c.attr.mode |= ATTR_BOLD;
@@ -1492,14 +1459,7 @@ tsetattr(const int *attr, int l)
 			term.c.attr.mode |= ATTR_ITALIC;
 			break;
 		case 4:
-			term.c.attr.ustyle = csiescseq.carg[i][0];
-
-			if (term.c.attr.ustyle != 0)
-				term.c.attr.mode |= ATTR_UNDERLINE;
-			else
-				term.c.attr.mode &= ~ATTR_UNDERLINE;
-
-			term.c.attr.mode ^= ATTR_DIRTYUNDERLINE;
+			term.c.attr.mode |= ATTR_UNDERLINE;
 			break;
 		case 5: /* slow blink */
 			/* FALLTHROUGH */
@@ -1549,18 +1509,6 @@ tsetattr(const int *attr, int l)
 			break;
 		case 49:
 			term.c.attr.bg = defaultbg;
-			break;
-		case 58:
-			term.c.attr.ucolor[0] = csiescseq.carg[i][1];
-			term.c.attr.ucolor[1] = csiescseq.carg[i][2];
-			term.c.attr.ucolor[2] = csiescseq.carg[i][3];
-			term.c.attr.mode ^= ATTR_DIRTYUNDERLINE;
-			break;
-		case 59:
-			term.c.attr.ucolor[0] = -1;
-			term.c.attr.ucolor[1] = -1;
-			term.c.attr.ucolor[2] = -1;
-			term.c.attr.mode ^= ATTR_DIRTYUNDERLINE;
 			break;
 		default:
 			if (BETWEEN(attr[i], 30, 37)) {
@@ -1778,7 +1726,7 @@ csihandle(void)
 			ttywrite(vtiden, strlen(vtiden), 0);
 		break;
 	case 'b': /* REP -- if last char is printable print it <n> more times */
-		LIMIT(csiescseq.arg[0], 1, 65535);
+		DEFAULT(csiescseq.arg[0], 1);
 		if (term.lastc)
 			while (csiescseq.arg[0]-- > 0)
 				tputc(term.lastc);
@@ -1837,7 +1785,7 @@ csihandle(void)
 			}
 			break;
 		case 1: /* above */
-			if (term.c.y > 0)
+			if (term.c.y > 1)
 				tclearregion(0, 0, term.col-1, term.c.y-1);
 			tclearregion(0, term.c.y, term.c.x, term.c.y);
 			break;
@@ -1863,12 +1811,10 @@ csihandle(void)
 		}
 		break;
 	case 'S': /* SU -- Scroll <n> line up */
-		if (csiescseq.priv) break;
 		DEFAULT(csiescseq.arg[0], 1);
 		tscrollup(term.top, csiescseq.arg[0], 0);
 		break;
 	case 'T': /* SD -- Scroll <n> line down */
-		if (csiescseq.priv) break;
 		DEFAULT(csiescseq.arg[0], 1);
 		tscrolldown(term.top, csiescseq.arg[0], 0);
 		break;
@@ -1934,11 +1880,7 @@ csihandle(void)
 		tcursor(CURSOR_SAVE);
 		break;
 	case 'u': /* DECRC -- Restore cursor position (ANSI.SYS) */
-		if (csiescseq.priv) {
-			goto unknown;
-		} else {
-			tcursor(CURSOR_LOAD);
-		}
+		tcursor(CURSOR_LOAD);
 		break;
 	case ' ':
 		switch (csiescseq.mode[1]) {
@@ -2080,10 +2022,8 @@ strhandle(void)
 			if (p && !strcmp(p, "?")) {
 				osc_color_response(j, 0, 1);
 			} else if (xsetcolorname(j, p)) {
-				if (par == 104 && narg <= 1) {
-					xloadcols();
+				if (par == 104 && narg <= 1)
 					return; /* color reset without parameter */
-				}
 				fprintf(stderr, "erresc: invalid color j=%d, p=%s\n",
 				        j, p ? p : "(null)");
 			} else {
@@ -2091,19 +2031,6 @@ strhandle(void)
 				 * TODO if defaultbg color is changed, borders
 				 * are dirty
 				 */
-				tfulldirt();
-			}
-			return;
-		case 110:
-		case 111:
-		case 112:
-			if (narg != 1)
-				break;
-			if ((j = par - 110) < 0 || j >= LEN(osc_table))
-				break; /* shouldn't be possible */
-			if (xsetcolorname(osc_table[j].idx, NULL)) {
-				fprintf(stderr, "erresc: %s color not found\n", osc_table[j].str);
-			} else {
 				tfulldirt();
 			}
 			return;
@@ -2180,8 +2107,8 @@ externalpipe(const Arg *arg)
 		lastpos = MIN(tlinehistlen(n) + 1, term.col) - 1;
 		if (lastpos < 0)
 			break;
-        if (lastpos == 0)
-            continue;
+		if (lastpos == 0)
+			continue;
 		end = &bp[lastpos + 1];
 		for (; bp < end; ++bp)
 			if (xwrite(to[1], buf, utf8encode(bp->u, buf)) < 0)
@@ -2388,7 +2315,7 @@ tcontrolcode(uchar ascii)
 		tputtab(1);
 		return;
 	case '\b':   /* BS */
-		tmoveto(term.c.x - 1, term.c.y);
+		tmoveto(term.c.x-1, term.c.y);
 		return;
 	case '\r':   /* CR */
 		tmoveto(0, term.c.y);
@@ -2539,7 +2466,6 @@ eschandle(uchar ascii)
 		treset();
 		resettitle();
 		xloadcols();
-		xsetmode(0, MODE_BRCKTPASTE);
 		break;
 	case '=': /* DECPAM -- Application keypad */
 		xsetmode(1, MODE_APPKEYPAD);
@@ -2574,9 +2500,6 @@ tputc(Rune u)
 	Glyph *gp;
 
 	control = ISCONTROL(u);
-	/* in UTF-8 mode, ignore c1 control characters early */
-	if (IS_SET(MODE_UTF8) && ISCONTROLC1(u) && !(term.esc & ESC_STR))
-		return;
 	if (u < 127 || !IS_SET(MODE_UTF8)) {
 		c[0] = u;
 		width = len = 1;
@@ -2635,12 +2558,6 @@ check_control_code:
 	 * they must not cause conflicts with sequences.
 	 */
 	if (control) {
-		/* in UTF-8 mode ignore handling C1 control characters */
-		if (IS_SET(MODE_UTF8) && ISCONTROLC1(u)) {
-			if (term.esc & ESC_STR_END)
-				strhandle();
-			return;
-		}
 		tcontrolcode(u);
 		/*
 		 * control codes are not shown ever
@@ -2687,16 +2604,11 @@ check_control_code:
 		gp = &term.line[term.c.y][term.c.x];
 	}
 
-	if (IS_SET(MODE_INSERT) && term.c.x+width < term.col) {
+	if (IS_SET(MODE_INSERT) && term.c.x+width < term.col)
 		memmove(gp+width, gp, (term.col - term.c.x - width) * sizeof(Glyph));
-		gp->mode &= ~ATTR_WIDE;
-	}
 
 	if (term.c.x+width > term.col) {
-		if (IS_SET(MODE_WRAP))
-			tnewline(1);
-		else
-			tmoveto(term.col - width, term.c.y);
+		tnewline(1);
 		gp = &term.line[term.c.y][term.c.x];
 	}
 
@@ -2706,7 +2618,7 @@ check_control_code:
 	if (width == 2) {
 		gp->mode |= ATTR_WIDE;
 		if (term.c.x+1 < term.col) {
-			if (gp[1].mode & ATTR_WIDE && term.c.x+2 < term.col) {
+			if (gp[1].mode == ATTR_WIDE && term.c.x+2 < term.col) {
 				gp[2].u = ' ';
 				gp[2].mode &= ~ATTR_WDUMMY;
 			}
@@ -2730,11 +2642,6 @@ twrite(const char *buf, int buflen, int show_ctrl)
 
 	for (n = 0; n < buflen; n += charsize) {
 		if (IS_SET(MODE_UTF8)) {
-			/* skip C1 bytes before utf8decode() mangles them */
-			if (ISCONTROLC1(buf[n] & 0xFF) && !(term.esc & ESC_STR)) {
-				charsize = 1;
-				continue;
-			}
 			/* process a complete utf8 char */
 			charsize = utf8decode(buf + n, &u, buflen - n);
 			if (charsize == 0)
