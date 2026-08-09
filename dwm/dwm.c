@@ -47,6 +47,7 @@
 #endif /* XINERAMA */
 #include <X11/Xft/Xft.h>
 #include <X11/Xlib-xcb.h>
+#include <X11/XKBlib.h>
 #include <xcb/res.h>
 
 #include "drw.h"
@@ -137,6 +138,7 @@ typedef struct {
 	KeySym keysym;
 	void (*func)(const Arg *);
 	const Arg arg;
+	int norepeat;
 } Key;
 
 typedef struct {
@@ -235,6 +237,7 @@ static int gettextprop(Window w, Atom atom, char *text, unsigned int size);
 static void grabbuttons(Client *c, int focused);
 static void grabkeys(void);
 static void keypress(XEvent *e);
+static void keyrelease(XEvent *e);
 static void killclient(const Arg *arg);
 static void manage(Window w, XWindowAttributes *wa);
 static void mappingnotify(XEvent *e);
@@ -347,6 +350,7 @@ static void (*handler[LASTEvent]) (XEvent *) = {
 	[Expose] = expose,
 	[FocusIn] = focusin,
 	[KeyPress] = keypress,
+	[KeyRelease] = keyrelease,
 	[MappingNotify] = mappingnotify,
 	[MapRequest] = maprequest,
 	[PropertyNotify] = propertynotify,
@@ -360,6 +364,7 @@ static Cur *cursor[CurLast];
 static Clr **scheme;
 static Display *dpy;
 static Drw *drw;
+static KeyCode pressedkeycode = 0;
 static Monitor *mons, *selmon;
 static Window root, wmcheckwin;
 
@@ -1324,8 +1329,20 @@ keypress(XEvent *e)
 	for (i = 0; i < LENGTH(keys); i++)
 		if (keysym == keys[i].keysym
 		&& CLEANMASK(keys[i].mod) == CLEANMASK(ev->state)
-		&& keys[i].func)
+		&& keys[i].func) {
+			if (keys[i].norepeat && ev->keycode == pressedkeycode)
+				return;
+			if (keys[i].norepeat)
+				pressedkeycode = ev->keycode;
 			keys[i].func(&(keys[i].arg));
+		}
+}
+
+void
+keyrelease(XEvent *e)
+{
+	if (e->xkey.keycode == pressedkeycode)
+		pressedkeycode = 0;
 }
 
 void
@@ -2009,6 +2026,7 @@ setup(void)
 
 	/* init screen */
 	screen = DefaultScreen(dpy);
+	XkbSetDetectableAutoRepeat(dpy, True, NULL);
 	sw = DisplayWidth(dpy, screen);
 	sh = DisplayHeight(dpy, screen);
 	root = RootWindow(dpy, screen);
